@@ -1,16 +1,17 @@
 import React from 'react';
 import './stylesheets/App.scss';
-import Grid from './components/Grid'
-import Calculator from './components/Calculator';
+import MathMaker from './components/MathMaker'
+import Header from './components/Header'
+import Footer from './components/Footer'
 
 
 function App() {
 
   return (
     <>
-
-      <Calculator></Calculator>
-      <Grid></Grid>
+      <Header></Header>
+      <MathMaker></MathMaker>
+      <Footer></Footer>
 
     </>
 
