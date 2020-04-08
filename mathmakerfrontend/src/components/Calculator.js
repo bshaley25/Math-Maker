@@ -1,29 +1,30 @@
 import React from 'react'
+import Symbol from './MathSymbols'
 
 export default () => {
+    
+    const numbers = []
+    for(let i=1;i<10;i++) {
+        numbers.push(<Symbol>{i}</Symbol>)
+    }
 
     return (
 
-            <div className='calculator'>
-                <div className='numbers'>
-                    <div>1</div>
-                    <div>2</div>
-                    <div>3</div>
-                    <div>4</div>
-                    <div>5</div>
-                    <div>6</div>
-                    <div>7</div>
-                    <div>8</div>
-                    <div>9</div>
-                    <div>0</div>
-                </div>
-                {/* <div className='symbols'>
-                    <div>+</div>
-                    <div>-</div>
-                    <div>×</div>
-                    <div>÷</div>
-                </div> */}
+        <div className='calculator'>
+            <div className='numbers'>
+                {numbers}
+                <Symbol id='zero'>0</Symbol>
             </div>
+
+            <div className='symbols'>
+                <Symbol> + </Symbol>
+                <Symbol> - </Symbol>
+                <Symbol> × </Symbol>
+                <Symbol> ÷ </Symbol>
+                <Symbol> / </Symbol>
+                <Symbol> = </Symbol>
+            </div>
+        </div>
 
     )
 }
