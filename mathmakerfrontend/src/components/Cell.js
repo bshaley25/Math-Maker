@@ -1,10 +1,7 @@
 import React, { useState } from 'react'
 
-export default ({ id }) => {
+export default ({ position, value, updateCell }) => {
 
-    const [className, setClassname] = useState('')
-
-    
     const dragStart = event => {
         const target = event.target
         
@@ -22,12 +19,12 @@ export default ({ id }) => {
 
         const card_value = event.dataTransfer.getData('card_value')
 
-        card_value === 'Line' ? setClassname('line') : event.target.innerText = card_value
+        updateCell(position, card_value)
+        
     }
 
     const handleClick = (event) => {
 
-        // console.log(event.target.className)
         let classname = event.target.className
         classname === '' ? event.target.className = 'line' : event.target.className = ''
         switch(classname) {
@@ -39,20 +36,19 @@ export default ({ id }) => {
               break;
             default:
                 event.target.className = ''
-          } 
-
+        } 
     }
 
     return (
         <div
-            id={id}
+            id={position}
             draggable={true}
             onDrop={drop}
             onDragStart={dragStart}
             onDragOver={dragOver}
-            // className={className}
             onClick={handleClick}
         >
+            {value}
         </div>
     )
 

@@ -25,6 +25,5 @@ export default () => {
                 <Symbol> = </Symbol>
             </div>
         </div>
-
     )
 }
