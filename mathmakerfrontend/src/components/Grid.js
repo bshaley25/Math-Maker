@@ -1,23 +1,23 @@
 import React from 'react'
 import Cell from './Cell'
 
-export default () => {
+export default ({gridData, updateCell, columns, rows}) => {
 
-    const makecells = []
-    for(let i=0;i<600;i++) {
-        const x = i % 10
-        const y = Math.floor(i / 10)
-        const position = `${x},${y}`
+    const makecells = gridData.map(cell => <Cell key={cell.position} {...cell} updateCell={updateCell} />)
 
-        makecells.push(<Cell id={position}></Cell>)
-    }
-    
     return (
         <>
-            <div id='capture' className='grid' >
+            <div 
+                id='grid' 
+                className='grid'
+                style={{
+                    display: 'grid',
+                    gridTemplateColumns: `repeat(${columns}, 2rem)`,
+                    gridTemplateRows: `repeat(${rows}, 2rem)`,
+                }}
+            >
                 {makecells}
             </div>
         </>
     )
-    
 }
