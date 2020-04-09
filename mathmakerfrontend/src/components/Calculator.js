@@ -5,7 +5,7 @@ export default () => {
     
     const numbers = []
     for(let i=1;i<10;i++) {
-        numbers.push(<Symbol>{i}</Symbol>)
+        numbers.push(<Symbol key={i}>{i}</Symbol>)
     }
 
     return (
