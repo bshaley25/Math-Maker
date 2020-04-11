@@ -1,23 +1,28 @@
-import React from 'react'
+import React, { useState } from 'react'
 import Cell from './Cell'
 
-export default ({gridData, updateCell, columns, rows}) => {
+export default ({gridData, updateCell, columns, rows, size}) => {
 
-    const makecells = gridData.map(cell => <Cell key={cell.position} {...cell} updateCell={updateCell} />)
+    
+    const [touchValue, setTouchValue] = useState('');
+    
+    const handleTouchValue = (value) => {
+        setTouchValue(value)
+    }
 
+    const makecells = gridData.map(cell => <Cell key={cell.position} {...cell} updateCell={updateCell} touchValue={touchValue} handleTouchValue={handleTouchValue}/>)
+    
     return (
-        <>
-            <div 
-                id='grid' 
-                className='grid'
-                style={{
-                    display: 'grid',
-                    gridTemplateColumns: `repeat(${columns}, 2rem)`,
-                    gridTemplateRows: `repeat(${rows}, 2rem)`,
-                }}
-            >
-                {makecells}
-            </div>
-        </>
+        <div 
+            id='grid' 
+            className='grid'
+            style={{
+                display: 'grid',
+                gridTemplateColumns: `repeat(${columns}, ${size}rem)`,
+                gridTemplateRows: `repeat(${rows}, ${size}rem)`,
+            }}
+        >
+            {makecells}
+        </div>
     )
 }

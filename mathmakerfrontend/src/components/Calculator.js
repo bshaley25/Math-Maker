@@ -1,5 +1,6 @@
 import React from 'react'
 import Symbol from './MathSymbols'
+import Paper from '@material-ui/core/Paper'
 
 export default () => {
     
@@ -9,21 +10,23 @@ export default () => {
     }
 
     return (
+        <Paper className='Calulator'>
+            <div className='calculator'>
+                <div className='numbers'>
+                    {numbers}
+                    <Symbol id='zero'>0</Symbol>
+                </div>
 
-        <div className='calculator'>
-            <div className='numbers'>
-                {numbers}
-                <Symbol id='zero'>0</Symbol>
+                <div className='symbols'>
+                    <Symbol> . </Symbol>
+                    <Symbol> + </Symbol>
+                    <Symbol> - </Symbol>
+                    <Symbol> × </Symbol>
+                    <Symbol> ÷ </Symbol>
+                    <Symbol> / </Symbol>
+                    <Symbol> = </Symbol>
+                </div>
             </div>
-
-            <div className='symbols'>
-                <Symbol> + </Symbol>
-                <Symbol> - </Symbol>
-                <Symbol> × </Symbol>
-                <Symbol> ÷ </Symbol>
-                <Symbol> / </Symbol>
-                <Symbol> = </Symbol>
-            </div>
-        </div>
+        </Paper>
     )
 }

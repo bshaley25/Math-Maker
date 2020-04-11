@@ -24,9 +24,11 @@ export default ({ id, children }) => {
         target.style.width = '4rem'
         target.style.height = '4rem'
         target.style.margin = 0
-
     }
 
+    const touch = (event) => {
+        console.log(event.target)
+    }
 
     return (
         <div
@@ -35,6 +37,9 @@ export default ({ id, children }) => {
             onDragStart={dragStart}
             onDragOver={dragOver}
             onDragEnd={dragEnd}
+            // onTouch={touch}
+            // onTouchMove={dragOver}
+            // onTouchEnd={dragEnd}
         >
             {children}
         </div>

@@ -2,15 +2,16 @@ import React, { Component } from 'react';
 import './stylesheets/App.scss';
 import Grid from './components/Grid'
 import Calculator from './components/Calculator';
-import Header from './components/Header'
-import Footer from './components/Footer'
+import Modal from './components/Modal'
+
 
 class App extends Component {
   
   state = {
     gridData: [],
-    columns: 20,
-    rows: 20
+    columns: 15,
+    rows: 15,
+    size: 2
   }
 
   componentDidMount() {
@@ -47,7 +48,6 @@ class App extends Component {
           const newPosition = `${(newColCount-1)},${counter}`
           newGridData.push(oldGridData[i])
           newGridData.push({position: newPosition, value:''})
-          console.log(i, newColCount)
           counter++
         } else {
           newGridData.push(oldGridData[i])
@@ -88,10 +88,12 @@ class App extends Component {
     } else if ( newRowCount < oldRowCount ) {      /// ROWS ARE GETTING SMALLER
       newGridData = oldGridData.slice( 0 , (-1 * columns) );
     }
-
     this.setState({gridData: newGridData})
   }
 
+  resizeGrid = (event) => {
+    this.setState({size: event.target.value})
+  }
 
   updateCell = (position, value) => {
     const newGridData = this.state.gridData.map(cell => {
@@ -107,27 +109,33 @@ class App extends Component {
   render() {
     return (
       <>
-        <Header clearGrid={this.createGrid} updateColumns={this.updateColumns} columns={this.state.columns} rows={this.state.rows} updateRows={this.updateRows}></Header>
+        <header className='header'>
+          <h1>Welcome</h1>
+
+          <div className='toolBar'>
+            <input className='input' type="number" min="10" max="40" onChange={this.updateRows} value={this.state.rows}/>
+            <input className='input' type="number" min="10" max="40" onChange={this.updateColumns} value={this.state.columns}/>
+            <input className='input' type="range" min="1.5" max="3.5" step='.1' onChange={this.resizeGrid} value={this.size}></input>
+            <button onClick={this.createGrid}> clear </button>
+            <Modal/>
+          </div>
+
+        </header>
+
         <main>
-          <Calculator ></Calculator>
-          <Grid gridData={this.state.gridData} updateCell={this.updateCell} columns={this.state.columns} rows={this.state.rows}></Grid>
+          <Calculator/>
+          <Grid 
+            gridData={this.state.gridData} 
+            updateCell={this.updateCell} 
+            columns={this.state.columns} 
+            rows={this.state.rows} 
+            size={this.state.size}
+          />
         </main>
-        <Footer></Footer>
+
       </>
     ) 
   }
-
-
-  // render() {
-  //   return (
-  //     <>
-  //       <Header></Header>
-  //       <MathMaker></MathMaker>
-  //       <Footer></Footer>
-  //     </>
-
-  //   );
-  // }
 }
 
 export default App;
