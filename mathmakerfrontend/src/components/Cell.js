@@ -1,7 +1,7 @@
 import React from 'react'
 
 
-export default ({ position, value, updateCell }) => {
+export default ({ position, value, updateCell, touchValue, handleTouchValue }) => {
 
     const dragStart = event => {
         const target = event.target
@@ -21,7 +21,6 @@ export default ({ position, value, updateCell }) => {
         const card_value = event.dataTransfer.getData('card_value')
 
         updateCell(position, card_value)
-        
     }
 
     const handleClick = (event) => {
@@ -40,6 +39,19 @@ export default ({ position, value, updateCell }) => {
         } 
     }
 
+    const handleTouch = (event) => {
+        // console.log('TOUCH END', event.target)
+
+        if(touchValue === '' ) {
+            console.log('empty', event.target.innerText)
+            handleTouchValue(event.target.innerText)
+        } else{
+            console.log("NOT", touchValue)
+            updateCell(position, touchValue)
+            handleTouchValue('')
+        }
+    }
+
     return (
         <div
             id={position}
@@ -47,7 +59,11 @@ export default ({ position, value, updateCell }) => {
             onDrop={drop}
             onDragStart={dragStart}
             onDragOver={dragOver}
-            onClick={handleClick}
+            // onTouchStart={touchStart}
+            // onTouch={touchStart}
+            onTouchEnd={handleTouch}
+            // onClick={handleClick}
+            onClick={event => event.type === 'touchend' ? null : handleClick}
         >
             {value}
         </div>
