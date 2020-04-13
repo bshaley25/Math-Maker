@@ -3,11 +3,14 @@ import './stylesheets/App.scss';
 import Grid from './components/Grid'
 import Calculator from './components/Calculator';
 import Modal from './components/Modal'
+import { grid } from '@material-ui/system';
 
 
 class App extends Component {
   
   state = {
+    user: null,
+    savedGrids: [],
     gridData: [],
     columns: 15,
     rows: 15,
@@ -106,6 +109,42 @@ class App extends Component {
     this.setState({gridData: newGridData})
   }
 
+  saveGrid = (event) => {
+
+    event.preventDefault()
+
+    fetch('http://localhost:5000/savegrid', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ gridData: this.state.gridData }),
+    })
+    .then(res => res.json())
+  }
+
+  getGrid = event => {
+
+    event.preventDefault()
+
+    fetch('http://localhost:5000/grids')
+    .then(res => res.json())
+    .then(allData => {
+
+      const savedGrids = allData.map(grid => {
+        return JSON.parse(grid.data)
+      })
+
+      this.setState({ savedGrids })
+
+    })
+  }
+
+  changeGrid = event => {
+    this.setState({gridData: this.state.savedGrids[0]})
+  }
+
+
   render() {
     return (
       <>
@@ -117,6 +156,9 @@ class App extends Component {
             <input className='input' type="number" min="10" max="40" onChange={this.updateColumns} value={this.state.columns}/>
             <input className='input' type="range" min="1.5" max="3.5" step='.1' onChange={this.resizeGrid} value={this.size}></input>
             <button onClick={this.createGrid}> clear </button>
+            <button onClick={this.saveGrid}> Save Grid </button>
+            <button onClick={this.getGrid}> GET IT!!! </button>
+            <button onClick={this.changeGrid}>Change Grid</button>
             <Modal/>
           </div>
 

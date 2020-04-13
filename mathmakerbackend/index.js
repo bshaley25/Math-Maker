@@ -56,7 +56,29 @@ app.post('/login', async (req,res) => {
     res.json({token})
 })
 
-app.get('/secrets', (req,res) => {
+app.post('/savegrid', (req,res) => {
+
+    let { gridData } = req.body 
+
+    gridData = JSON.stringify(gridData)
+
+    database('gridData')
+    .insert({
+        data: gridData,
+        user_id: 1
+    }).returning('*')
+    .then( grids => {
+        res.status(201).json(grids)
+    })
+})
+
+app.get('/grids', (req,res) => {
+    database('gridData')
+    .select()
+    .then(grid => res.json(grid))
+})
+
+async function authenticate (req,res,next) {
 
     const token = req.headers.authorization.split(' ')[1]
 
@@ -71,11 +93,13 @@ app.get('/secrets', (req,res) => {
         res.sendStatus(403).json("butts")
     }
 
-    const user = database('user')
+    const user = await database('user')
     .select()
     .where('id', id)
     .first()
 
-    res.json('butts')
+    req.user = user
 
-})
+    next()
+
+}
