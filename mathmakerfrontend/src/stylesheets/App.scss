@@ -1,58 +1,41 @@
 @import './Variable.scss';
-@import './Grid.scss';
-@import './Calculator.scss';
 @import './MeyerReset.scss';
+@import url(https://fonts.googleapis.com/css?family=Roboto:400);
 
 html {
-	height: inherit;
+	height: 100%;
 	background-color: $default
-
-	body {
-		height: inherit
-	}
 }
 
+body {
+	height: 100%;
+	font-family: 'Roboto', sans-serif;
+}
+
+#root {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	height: 100%;
+}
 
 header {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
 	height: 5rem;
-	background-color: $primarymain
+	background-color: $primarymain;
+	box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
 }
 
 main {
 	display: flex;
 }
 
-.modal {
-	position: fixed;
-	top: 0;
-	left: 0;
-	width:100%;
-	height: 100%;
-	background: rgba(0, 0, 0, 0.6);
-
-	section {
-		position:fixed;
-		transform: translate(-50%,-50%);
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		justify-content: space-around;
-		width: 30%;
-		padding: 5rem 0rem;
-		background: $paper;
-		height: auto;
-		top:50%;
-		left:50%;
-
-		img {
-			width: 400px;
-		}
-	}
-}
-///toggle class for Modal component
-.hidden {
-	display: none;
+footer {
+	display: flex;
+	justify-content: space-around;
+	align-items: center;
+	height: 5rem;
+	background-color: $primarymain;
 }

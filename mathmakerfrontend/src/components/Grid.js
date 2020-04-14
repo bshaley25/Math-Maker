@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import Cell from './Cell'
+import '../stylesheets/Grid.scss'
 
 export default ({gridData, updateCell, columns, rows, size}) => {
 

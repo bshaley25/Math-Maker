@@ -37,7 +37,6 @@ app.post('/login', async (req,res) => {
     .where('username', username)
     .first()
 
-
     if(!found_user) {
         res.sendStatus(401)
     }
@@ -56,25 +55,29 @@ app.post('/login', async (req,res) => {
     res.json({token})
 })
 
-app.post('/savegrid', (req,res) => {
+app.post('/savegrid', authenticate, (req,res) => {
 
-    let { gridData } = req.body 
-
+    
+    let { gridData, rows, columns } = req.body 
+    
     gridData = JSON.stringify(gridData)
 
     database('gridData')
     .insert({
-        data: gridData,
-        user_id: 1
+        user_id: req.user.id,
+        colums: columns,
+        rows: rows,
+        data: gridData
     }).returning('*')
     .then( grids => {
         res.status(201).json(grids)
     })
 })
 
-app.get('/grids', (req,res) => {
+app.get('/grids', authenticate, (req,res) => {
     database('gridData')
     .select()
+    .where('user_id', req.user.id)
     .then(grid => res.json(grid))
 })
 
