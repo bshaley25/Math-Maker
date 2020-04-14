@@ -1,6 +1,6 @@
 import React from 'react'
 import Symbol from './MathSymbols'
-import Paper from '@material-ui/core/Paper'
+import '../stylesheets/Calculator.scss'
 
 export default () => {
     
@@ -10,7 +10,7 @@ export default () => {
     }
 
     return (
-        <Paper className='Calulator'>
+        <div>
             <div className='calculator'>
                 <div className='numbers'>
                     {numbers}
@@ -27,6 +27,6 @@ export default () => {
                     <Symbol> = </Symbol>
                 </div>
             </div>
-        </Paper>
+        </div>
     )
 }

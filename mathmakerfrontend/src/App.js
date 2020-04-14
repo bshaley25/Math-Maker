@@ -1,20 +1,20 @@
 import React, { Component } from 'react';
 import './stylesheets/App.scss';
-import Grid from './components/Grid'
-import Calculator from './components/Calculator';
-import Modal from './components/Modal'
-import { grid } from '@material-ui/system';
-
+import Main from './components/Main'
+import PictureModal from './components/Modal'
+import Login from './components/Login'
+import DashBoard from './components/DashBoard';
 
 class App extends Component {
   
   state = {
+    page: 'main',
     user: null,
     savedGrids: [],
     gridData: [],
     columns: 15,
     rows: 15,
-    size: 2
+    size: 2,
   }
 
   componentDidMount() {
@@ -109,6 +109,26 @@ class App extends Component {
     this.setState({gridData: newGridData})
   }
 
+  saveAsNewGrid = (event) => {
+
+    event.preventDefault()
+
+    fetch('http://localhost:5000/savegrid', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.token}`
+      },
+      body: JSON.stringify({ 
+        columns: this.state.columns,
+        rows: this.state.rows,
+        gridData: this.state.gridData
+      }),
+    })
+    .then(res => res.json())
+    .then(savedGrids => this.setState({savedGrids}))
+  }
+
   saveGrid = (event) => {
 
     event.preventDefault()
@@ -117,10 +137,12 @@ class App extends Component {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.token}`
       },
       body: JSON.stringify({ gridData: this.state.gridData }),
     })
     .then(res => res.json())
+    .then()
   }
 
   getGrid = event => {
@@ -141,9 +163,16 @@ class App extends Component {
   }
 
   changeGrid = event => {
-    this.setState({gridData: this.state.savedGrids[0]})
+    this.setState({gridData: this.state.savedGrids})
   }
 
+  loginPageChange = () => {
+    this.setState({page: 'main'})
+  }
+
+  loginUsername = (user) => {
+    this.setState({user: user})
+  }
 
   render() {
     return (
@@ -151,29 +180,35 @@ class App extends Component {
         <header className='header'>
           <h1>Welcome</h1>
 
-          <div className='toolBar'>
-            <input className='input' type="number" min="10" max="40" onChange={this.updateRows} value={this.state.rows}/>
-            <input className='input' type="number" min="10" max="40" onChange={this.updateColumns} value={this.state.columns}/>
-            <input className='input' type="range" min="1.5" max="3.5" step='.1' onChange={this.resizeGrid} value={this.size}></input>
-            <button onClick={this.createGrid}> clear </button>
-            <button onClick={this.saveGrid}> Save Grid </button>
-            <button onClick={this.getGrid}> GET IT!!! </button>
-            <button onClick={this.changeGrid}>Change Grid</button>
-            <Modal/>
+          <div className='toolbar'>
+            <button onClick={this.createGrid}> Clear </button>
+            { localStorage.token ? <button onClick={this.saveGrid}> Save Grid </button> : null}
+            { localStorage.token ? <button onClick={this.saveAsNewGrid}> Save As New Grid </button> : null}
+            {/* <button onClick={this.getGrid}> GET IT!!! </button> */}
+            {/* <button onClick={this.changeGrid}>Change Grid</button> */}
+            <PictureModal/>
+            { this.state.page === 'dashboard' ? <button onClick={() => this.setState({page: 'main'})}>Go back to main</button> : <button onClick={() => this.setState({page: 'dashboard'})}>DashBoard</button> }
+            { this.state.page === 'login' ? <button onClick={() => this.setState({page: 'main'})}>Go back to main</button> : <button onClick={() => this.setState({page: 'login'})}>login</button>  }
           </div>
 
         </header>
 
-        <main>
-          <Calculator/>
-          <Grid 
-            gridData={this.state.gridData} 
-            updateCell={this.updateCell} 
-            columns={this.state.columns} 
-            rows={this.state.rows} 
-            size={this.state.size}
-          />
-        </main>
+
+        { this.state.page === 'main' ? <Main
+          gridData={this.state.gridData} 
+          updateCell={this.updateCell} 
+          columns={this.state.columns} 
+          rows={this.state.rows} 
+          size={this.state.size}
+        /> : null}
+        { this.state.page === 'login' ? <Login loginPageChange={this.loginPageChange}/> : null }
+        { this.state.page === 'dashboard' ? <DashBoard savedGrids={this.state.savedGrids}></DashBoard> : null}
+
+        <footer>
+          <input className='input' type="number" min="10" max="40" onChange={this.updateRows} value={this.state.rows}/>
+          <input className='input' type="number" min="10" max="40" onChange={this.updateColumns} value={this.state.columns}/>
+          <input className='input' type="range" min="1.5" max="3.5" step='.1' onChange={this.resizeGrid} value={this.size}></input>
+        </footer>
 
       </>
     ) 
