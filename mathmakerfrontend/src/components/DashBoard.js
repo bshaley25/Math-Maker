@@ -1,9 +1,9 @@
 import React from 'react'
 import Card from './Card'
 
-export default ({ savedGrids, loadSavedGrid}) => {
+export default ({ savedGrids, loadSavedGrid, deleteGrid}) => {
 
-    const cards = savedGrids.map((grid, i)=> <Card key={i} grid={grid} loadSavedGrid={loadSavedGrid}/>)
+    const cards = savedGrids.map((grid, i)=> <Card key={i} grid={grid} loadSavedGrid={loadSavedGrid} deleteGrid={deleteGrid}/>)
 
     return (
         <main className='dashboard'>

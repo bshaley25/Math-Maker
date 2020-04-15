@@ -105,9 +105,10 @@ app.post('/grids', authenticate, (req,res) => {
 
 app.put('/grids/:id', authenticate, function (req, res) {
 
-    console.log( req.body.gridData)
+    // console.log( req.body.gridData)
     
     database('gridData')
+    .select()
     .where({
         user_id: req.user.id,
         id: req.params.id
@@ -120,8 +121,22 @@ app.put('/grids/:id', authenticate, function (req, res) {
     .then(grid => {
         res.json(grid)
     })
+})
+
+app.delete('/grids/:id', authenticate, (req, res) => {
+
+    database('gridData')
+    .select()
+    .where({
+        user_id: req.user.id,
+        id: req.params.id
+    })
+    .del()
+    .then(res.sendStatus(204))
 
 })
+
+
 
 
 

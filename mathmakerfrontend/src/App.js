@@ -14,13 +14,13 @@ class App extends Component {
     page: 'main',
     hasToken: null,
     user: null,
+    savedGrids: [],
     gridID: null,
     gridData: [],
-    savedGrids: [],
     columns: 15,
     rows: 15,
-    url: null,
     size: 2,
+    url: null,
   }
 
   componentDidMount() {
@@ -182,7 +182,11 @@ class App extends Component {
       }),
     })
     .then(res => res.json())
-    .then(savedGrids => this.setState({savedGrids}))
+    .then(savedGrids => {
+      savedGrids.forEach(savedGrid => {
+        this.setState({savedGrids: [...this.state.savedGrids, savedGrid ]})
+      })
+    })
   }
 
   saveGrid = (event) => {
@@ -209,21 +213,17 @@ class App extends Component {
     })
   }
 
-  DeleteGrid = event => {
+  deleteGrid = (gridID) => {
 
-    event.preventDefault()
+    fetch(`http://localhost:5000/grids/${gridID}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.token}`
+      }
+    })
+    .then(res => res.status === 204 ? console.log('Delete Successful') : console.log('Didnt work'))
 
-    // fetch('http://localhost:5000/grids')
-    // .then(res => res.json())
-    // .then(allData => {
-
-    //   const savedGrids = allData.map(grid => {
-    //     return JSON.parse(grid.data)
-    //   })
-
-    //   this.setState({ savedGrids })
-
-    // })
   }
 
   changePage = (page) => {
@@ -239,11 +239,12 @@ class App extends Component {
   }
 
   loadSavedGrid = (columns, rows, gridData, gridID) => {
-    this.setState({columns: columns})
-    this.setState({rows: rows})
-    this.setState({gridData: gridData})
-    this.setState({gridID: gridID})
-    this.setState({page: 'main'})
+    // this.setState({gridData: gridData})
+    // this.setState({columns: columns})
+    // this.setState({rows: rows})
+    // this.setState({gridID: gridID})
+    // this.setState({page: 'main'})
+    console.log(columns, rows, gridData, gridID)
   }
 
   render() {
@@ -268,7 +269,7 @@ class App extends Component {
           /> 
           : null}
         { this.state.page === 'login' ? <Login changePage={this.changePage} loginUsername={this.loginUsername} changeToken={this.changeToken} /> : null }
-        { this.state.page === 'dashboard' ? <DashBoard savedGrids={this.state.savedGrids} loadSavedGrid={this.loadSavedGrid}></DashBoard> : null}
+        { this.state.page === 'dashboard' ? <DashBoard savedGrids={this.state.savedGrids} loadSavedGrid={this.loadSavedGrid} deleteGrid={this.deleteGrid}></DashBoard> : null}
 
         <footer>
           <button onClick={this.createGrid}> Clear </button>
