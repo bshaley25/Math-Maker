@@ -10,22 +10,20 @@ export default () => {
     }
 
     return (
-        <div>
-            <div className='calculator'>
-                <div className='numbers'>
-                    {numbers}
-                    <Symbol id='zero'>0</Symbol>
-                </div>
+        <div className='calculator'>
+            <div className='numbers'>
+                {numbers}
+                <Symbol id='zero'>0</Symbol>
+            </div>
 
-                <div className='symbols'>
-                    <Symbol> . </Symbol>
-                    <Symbol> + </Symbol>
-                    <Symbol> - </Symbol>
-                    <Symbol> × </Symbol>
-                    <Symbol> ÷ </Symbol>
-                    <Symbol> / </Symbol>
-                    <Symbol> = </Symbol>
-                </div>
+            <div className='symbols'>
+                <Symbol> . </Symbol>
+                <Symbol> + </Symbol>
+                <Symbol> - </Symbol>
+                <Symbol> × </Symbol>
+                <Symbol> ÷ </Symbol>
+                <Symbol> / </Symbol>
+                <Symbol> = </Symbol>
             </div>
         </div>
     )

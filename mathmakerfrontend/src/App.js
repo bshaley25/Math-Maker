@@ -4,11 +4,13 @@ import Main from './components/Main'
 import PictureModal from './components/Modal'
 import Login from './components/Login'
 import DashBoard from './components/DashBoard';
+import UserTools from './components/UserTools'
 
 class App extends Component {
   
   state = {
     page: 'main',
+    hasToken: null,
     user: null,
     savedGrids: [],
     gridData: [],
@@ -19,6 +21,25 @@ class App extends Component {
 
   componentDidMount() {
     this.createGrid()
+
+    if(localStorage.token) {
+      this.setState({hasToken: true})
+
+      fetch('http://localhost:5000/grids', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.token}`
+        }
+      })
+      .then(res => res.json())
+      .then(data => {
+        this.setState({user: data.user})
+        this.setState({savedGrids: data.grids})
+      })
+    } else {
+      this.setState({hasToken: false})
+    }
   }
 
   createGrid = () => {
@@ -33,10 +54,19 @@ class App extends Component {
     }
     this.setState({gridData})
   }
-  
-  updateColumns = (event) => {
-    this.updategridColumns(event.target.value, this.state.columns)
-    this.setState({columns: parseInt(event.target.value)})
+
+  plusOneColumn = () => {
+    const oldColCount = this.state.columns
+    const newColCount = oldColCount + 1
+    this.updategridColumns(newColCount, oldColCount)
+    this.setState({columns: newColCount})
+  }
+
+  minusOneColumn = () => {
+    const oldColCount = this.state.columns
+    const newColCount = oldColCount - 1
+    this.updategridColumns(newColCount, oldColCount)
+    this.setState({columns: newColCount})
   }
   
   updategridColumns = (newColCount, oldColCount) => {
@@ -69,9 +99,18 @@ class App extends Component {
     this.setState({gridData: newGridData})
   }
 
-  updateRows = (event) => {
-    this.updategridRows(event.target.value, this.state.rows)
-    this.setState({rows: parseInt(event.target.value)})
+  plusOneRow = () => {
+    const oldRowCount = this.state.rows
+    const newRowCount = oldRowCount + 1
+    this.updategridRows(newRowCount, oldRowCount)
+    this.setState({rows: newRowCount})
+  }
+
+  minusOneRow = () => {
+    const oldRowCount = this.state.rows
+    const newRowCount = oldRowCount - 1
+    this.updategridRows(newRowCount, oldRowCount)
+    this.setState({rows: newRowCount})
   }
   
   updategridRows = (newRowCount, oldRowCount) => { 
@@ -162,52 +201,61 @@ class App extends Component {
     })
   }
 
-  changeGrid = event => {
-    this.setState({gridData: this.state.savedGrids})
-  }
-
-  loginPageChange = () => {
-    this.setState({page: 'main'})
+  changePage = (page) => {
+    this.setState({page: page})
   }
 
   loginUsername = (user) => {
     this.setState({user: user})
   }
 
+  changeToken = () => {
+    this.setState({hasToken: true})
+  }
+
   render() {
     return (
       <>
         <header className='header'>
-          <h1>Welcome</h1>
-
-          <div className='toolbar'>
-            <button onClick={this.createGrid}> Clear </button>
-            { localStorage.token ? <button onClick={this.saveGrid}> Save Grid </button> : null}
-            { localStorage.token ? <button onClick={this.saveAsNewGrid}> Save As New Grid </button> : null}
-            {/* <button onClick={this.getGrid}> GET IT!!! </button> */}
-            {/* <button onClick={this.changeGrid}>Change Grid</button> */}
+          <h1>Welcome {this.state.user}</h1>
+          <nav className='toolbar'>
+            { this.state.hasToken ? <UserTools changePage={this.changePage} saveGrid={this.saveGrid} saveAsNewGrid={this.saveAsNewGrid} page={this.state.page} /> : null}
             <PictureModal/>
-            { this.state.page === 'dashboard' ? <button onClick={() => this.setState({page: 'main'})}>Go back to main</button> : <button onClick={() => this.setState({page: 'dashboard'})}>DashBoard</button> }
-            { this.state.page === 'login' ? <button onClick={() => this.setState({page: 'main'})}>Go back to main</button> : <button onClick={() => this.setState({page: 'login'})}>login</button>  }
-          </div>
-
+            { this.state.page === 'login' ? <button onClick={() => this.changePage('main')}>Go back to main</button> : <button onClick={() => this.changePage('login')}>login</button>  }
+          </nav>
         </header>
 
-
-        { this.state.page === 'main' ? <Main
-          gridData={this.state.gridData} 
-          updateCell={this.updateCell} 
-          columns={this.state.columns} 
-          rows={this.state.rows} 
-          size={this.state.size}
-        /> : null}
-        { this.state.page === 'login' ? <Login loginPageChange={this.loginPageChange}/> : null }
+        { this.state.page === 'main' ? 
+          <Main
+            gridData={this.state.gridData} 
+            updateCell={this.updateCell} 
+            columns={this.state.columns} 
+            rows={this.state.rows} 
+            size={this.state.size}
+          /> 
+          : null}
+        { this.state.page === 'login' ? <Login changePage={this.changePage} loginUsername={this.loginUsername} changeToken={this.changeToken} /> : null }
         { this.state.page === 'dashboard' ? <DashBoard savedGrids={this.state.savedGrids}></DashBoard> : null}
 
         <footer>
-          <input className='input' type="number" min="10" max="40" onChange={this.updateRows} value={this.state.rows}/>
-          <input className='input' type="number" min="10" max="40" onChange={this.updateColumns} value={this.state.columns}/>
-          <input className='input' type="range" min="1.5" max="3.5" step='.1' onChange={this.resizeGrid} value={this.size}></input>
+          <button onClick={this.createGrid}> Clear </button>
+          <div>
+            {/* <input className='input' type="number" min="10" max="40" onChange={this.updateRows} value={this.state.rows}/> */}
+            <p>Rows: {this.state.rows}</p>
+            <button onClick={() => this.minusOneRow()}>-1</button>   
+            <button onClick={() => this.plusOneRow()}>+1</button>   
+          </div>
+
+          <div>
+            <p>Columns: {this.state.columns}</p>
+            <button onClick={() => this.minusOneColumn()}>-1</button>   
+            <button onClick={() => this.plusOneColumn()}>+1</button>        
+          </div>
+
+          <div>
+            <p>Grid Size</p>
+            <input className='input' type="range" min="1.5" max="3.5" step='.1' onChange={this.resizeGrid} value={this.size}></input>
+          </div>
         </footer>
 
       </>

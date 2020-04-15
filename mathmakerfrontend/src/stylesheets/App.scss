@@ -26,10 +26,22 @@ header {
 	height: 5rem;
 	background-color: $primarymain;
 	box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+
+	h1 {
+		font-size: 2rem;
+		padding: 0 16px;
+		color: white;
+	}
+
+	nav {
+		padding: 0 16px;
+	}
 }
 
 main {
 	display: flex;
+	justify-content: center;
+	align-items: center;
 }
 
 footer {
@@ -38,4 +50,13 @@ footer {
 	align-items: center;
 	height: 5rem;
 	background-color: $primarymain;
+
+	div {
+		
+
+		p {
+			color: white;
+			padding: 8px
+		}
+	}
 }
