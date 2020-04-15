@@ -16,8 +16,20 @@ app.use(bodyParser.json())
 app.listen(PORT, console.log(`out here on port ${PORT}`))
 
 
-app.post('/users', (req, res) => {
+app.post('/users', async (req, res) => {
     const { username, password } = req.body
+
+    const found_user = await database('user')
+    .select()
+    .where('username', username)
+    .first()
+    
+    if(found_user) {
+        res.status(401).json({message: "Username already in use. Please choose a different username"})
+    } else if(password.length < 5) {
+        res.status(401).json({message: 'Password must be at least 5 characters long'})
+    }
+
     bcrypt.hash(password, 12).then(hashedPassword => {
         database('user')
         .insert({
@@ -25,7 +37,13 @@ app.post('/users', (req, res) => {
             password_hash: hashedPassword
         }).returning('*')
         .then(users => {
-            res.status(201).json( users )
+
+            const token = jwt.sign({
+                id: users[0].id,
+                username: users[0].username
+            }, process.env.SECRET)
+
+            res.status(201).json( { username: users[0].username, token: token })
         })
     })
 })
@@ -38,13 +56,13 @@ app.post('/login', async (req,res) => {
     .first()
 
     if(!found_user) {
-        res.sendStatus(401)
+        res.status(401).json({message: 'Please enter correct information'})
     }
 
     const isPasswordMatch = await bcrypt.compare(password, found_user.password_hash)
 
     if(!isPasswordMatch) {
-        res.sendStatus(401)
+        res.status(401).json({message: 'Please enter correct information'})
     }
 
     const token = jwt.sign({
@@ -52,14 +70,25 @@ app.post('/login', async (req,res) => {
         username: found_user.username
     }, process.env.SECRET)
 
-    res.json({token})
+    res.json({
+        token: token,
+        username: username
+    })
 })
 
-app.post('/savegrid', authenticate, (req,res) => {
+app.get('/grids', authenticate, (req,res) => {
+    database('gridData')
+    .select()
+    .where('user_id', req.user.id)
+    .then(grid => res.json({
+        user: req.user.username,
+        grids: grid
+    }))
+})
 
-    
+app.post('/grids', authenticate, (req,res) => {
+
     let { gridData, rows, columns } = req.body 
-    
     gridData = JSON.stringify(gridData)
 
     database('gridData')
@@ -72,13 +101,6 @@ app.post('/savegrid', authenticate, (req,res) => {
     .then( grids => {
         res.status(201).json(grids)
     })
-})
-
-app.get('/grids', authenticate, (req,res) => {
-    database('gridData')
-    .select()
-    .where('user_id', req.user.id)
-    .then(grid => res.json(grid))
 })
 
 async function authenticate (req,res,next) {

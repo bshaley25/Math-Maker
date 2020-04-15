@@ -61,9 +61,9 @@ export default ({ position, value, updateCell, touchValue, handleTouchValue }) =
             onDragOver={dragOver}
             // onTouchStart={touchStart}
             // onTouch={touchStart}
-            onTouchEnd={handleTouch}
+            // onTouchEnd={handleTouch}
             // onClick={handleClick}
-            onClick={event => event.type === 'touchend' ? null : handleClick}
+            onClick={event => handleClick(event)}
         >
             {value}
         </div>

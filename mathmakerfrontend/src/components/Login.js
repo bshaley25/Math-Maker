@@ -1,12 +1,29 @@
 import React,  { useState } from 'react'
 import '../stylesheets/Login.scss'
 
-export default ({ loginPageChange }) => {
+export default ({ changePage, loginUsername, changeToken }) => {
 
     const [hasAccount, setHasAccount] = useState(true)
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
+    const [errorMessage, setErrorMessage] = useState('')
     
+    const signInSuccess = async (response) => {
+        const loginData = await response.json()
+
+        localStorage.setItem('token', loginData.token);
+        loginUsername(loginData.username)
+        setUsername('')
+        setPassword('')
+        changePage('main')
+        changeToken()
+    }
+
+    const signInFailure = async (response) => {
+        const { message } = await response.json()
+
+        setErrorMessage(message)
+    } 
 
 
     const handleSubmit = (event) => {
@@ -24,15 +41,10 @@ export default ({ loginPageChange }) => {
             password: password
           }),
         })
-        .then(res => res.json())
-        .then(loginData => {
-            localStorage.setItem('token', loginData.token);
+        .then(res => {
+            console.log(res)
+            res.status === 200 || res.status === 201 ? signInSuccess(res) : signInFailure(res)
         })
-        .then(() => {
-            setUsername('')
-            setPassword('')
-        })
-        .then(loginPageChange())
     }
 
     return (
@@ -49,6 +61,7 @@ export default ({ loginPageChange }) => {
                 { hasAccount ? 'Sign-up' : 'Log-in'}
                 </button>
             </h3>
+            {errorMessage ? <h2 className='error'>{errorMessage}</h2> : null}
         </div>
     )
 

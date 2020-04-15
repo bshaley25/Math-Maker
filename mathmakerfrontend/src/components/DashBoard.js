@@ -1,11 +1,13 @@
 import React from 'react'
-import Dashboard from './Main'
+import Card from './Card'
 
 export default ({ savedGrids }) => {
 
+    const cards = savedGrids.map(grid => <Card grid={grid}/>)
+
     return (
         <div className='dashboard'>
-            <h1>HELLO</h1>
+            {cards}
         </div>
     )
 
