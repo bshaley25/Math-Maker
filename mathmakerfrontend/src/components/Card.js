@@ -20,5 +20,4 @@ export default ({ grid, loadSavedGrid, deleteGrid }) => {
             <button onClick={handleDelete}>Delete</button>
         </section>
     )
-
 }
