@@ -1,14 +1,14 @@
 import React from 'react'
 import Card from './Card'
 
-export default ({ savedGrids }) => {
+export default ({ savedGrids, loadSavedGrid}) => {
 
-    const cards = savedGrids.map(grid => <Card grid={grid}/>)
+    const cards = savedGrids.map((grid, i)=> <Card key={i} grid={grid} loadSavedGrid={loadSavedGrid}/>)
 
     return (
-        <div className='dashboard'>
+        <main className='dashboard'>
             {cards}
-        </div>
+        </main>
     )
 
 }

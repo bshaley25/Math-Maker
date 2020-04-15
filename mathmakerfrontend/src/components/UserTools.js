@@ -1,14 +1,10 @@
 import React from 'react'
-import storage from '../Firebase'
 
-export default ({ saveGrid, saveAsNewGrid, changePage, page }) => {
-
-    
+export default ({ saveGrid, saveAsNewGrid, changePage, page, gridID }) => {
 
     return (
         <>
-            <button onClick={saveGrid}> Save Grid </button>
-            <button onClick={saveAsNewGrid}> Save As New Grid </button>
+            { !gridID ? <button onClick={saveAsNewGrid}> Save As New Grid </button> : <button onClick={saveGrid}> Save Grid </button>}
             { page === 'main' ? <button onClick={() => changePage('dashboard')}>Go to Dashboard</button> : <button onClick={() => changePage('main')}>Go to MathMaker</button> }
         </>
     )
