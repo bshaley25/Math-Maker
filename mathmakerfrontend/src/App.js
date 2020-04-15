@@ -5,6 +5,8 @@ import PictureModal from './components/Modal'
 import Login from './components/Login'
 import DashBoard from './components/DashBoard';
 import UserTools from './components/UserTools'
+import { storage } from './Firebase/index'
+import html2canvas from 'html2canvas'
 
 class App extends Component {
   
@@ -12,10 +14,12 @@ class App extends Component {
     page: 'main',
     hasToken: null,
     user: null,
-    savedGrids: [],
+    gridID: null,
     gridData: [],
+    savedGrids: [],
     columns: 15,
     rows: 15,
+    url: null,
     size: 2,
   }
 
@@ -24,22 +28,25 @@ class App extends Component {
 
     if(localStorage.token) {
       this.setState({hasToken: true})
-
-      fetch('http://localhost:5000/grids', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.token}`
-        }
-      })
-      .then(res => res.json())
-      .then(data => {
-        this.setState({user: data.user})
-        this.setState({savedGrids: data.grids})
-      })
+      this.fetchGrids()
     } else {
       this.setState({hasToken: false})
     }
+  }
+
+  fetchGrids = () => {
+    fetch('http://localhost:5000/grids', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.token}`
+      }
+    })
+    .then(res => res.json())
+    .then(data => {
+      this.setState({user: data.user})
+      this.setState({savedGrids: data.grids})
+    })
   }
 
   createGrid = () => {
@@ -86,7 +93,6 @@ class App extends Component {
           newGridData.push(oldGridData[i])
         }
       }
-
     } else if ( newColCount - oldColCount < 0 ) {  // COLUMNS ARE GETTING SMALLER
       for(let i=0; i<(oldColCount*row); i++) {
         if((i+1) % oldColCount === 0 ) {
@@ -152,7 +158,18 @@ class App extends Component {
 
     event.preventDefault()
 
-    fetch('http://localhost:5000/savegrid', {
+    // console.log(storage.ref().putString())
+    // html2canvas(document.getElementById('grid'))
+    // .then(canvas => {
+    //   console.log( typeof canvas.toDataURL())
+    //   storage.ref.putString(canvas.toDataURL(), 'base64').then(function(snapshot) {
+    //     console.log('Uploaded a base64 string!');
+    //   });
+    // });
+    // const { url } = this.state
+    // const uploadTask = storage.ref('images/')
+
+    fetch('http://localhost:5000/grids', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -172,33 +189,41 @@ class App extends Component {
 
     event.preventDefault()
 
-    fetch('http://localhost:5000/savegrid', {
-      method: 'POST',
+    console.log('before fetch', this.state.gridData)
+
+    fetch(`http://localhost:5000/grids/${this.state.gridID}`, {
+      method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${localStorage.token}`
       },
-      body: JSON.stringify({ gridData: this.state.gridData }),
+      body: JSON.stringify({ 
+        colums: this.state.columns,
+        rows: this.state.rows,
+        gridData: this.state.gridData
+      }),
     })
     .then(res => res.json())
-    .then()
+    .then(newGridData => {
+      console.log('after fetch', JSON.parse(newGridData[0]))
+    })
   }
 
-  getGrid = event => {
+  DeleteGrid = event => {
 
     event.preventDefault()
 
-    fetch('http://localhost:5000/grids')
-    .then(res => res.json())
-    .then(allData => {
+    // fetch('http://localhost:5000/grids')
+    // .then(res => res.json())
+    // .then(allData => {
 
-      const savedGrids = allData.map(grid => {
-        return JSON.parse(grid.data)
-      })
+    //   const savedGrids = allData.map(grid => {
+    //     return JSON.parse(grid.data)
+    //   })
 
-      this.setState({ savedGrids })
+    //   this.setState({ savedGrids })
 
-    })
+    // })
   }
 
   changePage = (page) => {
@@ -213,13 +238,21 @@ class App extends Component {
     this.setState({hasToken: true})
   }
 
+  loadSavedGrid = (columns, rows, gridData, gridID) => {
+    this.setState({columns: columns})
+    this.setState({rows: rows})
+    this.setState({gridData: gridData})
+    this.setState({gridID: gridID})
+    this.setState({page: 'main'})
+  }
+
   render() {
     return (
       <>
         <header className='header'>
           <h1>Welcome {this.state.user}</h1>
           <nav className='toolbar'>
-            { this.state.hasToken ? <UserTools changePage={this.changePage} saveGrid={this.saveGrid} saveAsNewGrid={this.saveAsNewGrid} page={this.state.page} /> : null}
+            { this.state.hasToken ? <UserTools changePage={this.changePage} saveGrid={this.saveGrid} saveAsNewGrid={this.saveAsNewGrid} page={this.state.page} gridID={this.state.gridID}/> : null}
             <PictureModal/>
             { this.state.page === 'login' ? <button onClick={() => this.changePage('main')}>Go back to main</button> : <button onClick={() => this.changePage('login')}>login</button>  }
           </nav>
@@ -235,7 +268,7 @@ class App extends Component {
           /> 
           : null}
         { this.state.page === 'login' ? <Login changePage={this.changePage} loginUsername={this.loginUsername} changeToken={this.changeToken} /> : null }
-        { this.state.page === 'dashboard' ? <DashBoard savedGrids={this.state.savedGrids}></DashBoard> : null}
+        { this.state.page === 'dashboard' ? <DashBoard savedGrids={this.state.savedGrids} loadSavedGrid={this.loadSavedGrid}></DashBoard> : null}
 
         <footer>
           <button onClick={this.createGrid}> Clear </button>
@@ -254,7 +287,7 @@ class App extends Component {
 
           <div>
             <p>Grid Size</p>
-            <input className='input' type="range" min="1.5" max="3.5" step='.1' onChange={this.resizeGrid} value={this.size}></input>
+            <input className='input' type="range" min="2" max="3" step='.1' onChange={this.resizeGrid} value={this.size}></input>
           </div>
         </footer>
 

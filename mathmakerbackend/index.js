@@ -103,6 +103,28 @@ app.post('/grids', authenticate, (req,res) => {
     })
 })
 
+app.put('/grids/:id', authenticate, function (req, res) {
+
+    console.log( req.body.gridData)
+    
+    database('gridData')
+    .where({
+        user_id: req.user.id,
+        id: req.params.id
+    })
+    .update({
+       colums: req.body.colums,
+       rows: req.body.rows,
+       data: req.body.gridData
+    }, ['id', 'colums', 'rows', 'data' ])
+    .then(grid => {
+        res.json(grid)
+    })
+
+})
+
+
+
 async function authenticate (req,res,next) {
 
     const token = req.headers.authorization.split(' ')[1]

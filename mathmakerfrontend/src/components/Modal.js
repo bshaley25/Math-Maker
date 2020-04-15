@@ -13,7 +13,7 @@ export default () => {
     setOpen(true);
     html2canvas(document.getElementById('grid'))
     .then(canvas => {
-        setDataURL(canvas.toDataURL())
+      setDataURL(canvas.toDataURL())
     });
   };
 
