@@ -1,0 +1,92 @@
+@import './Variable.scss';
+@import './MeyerReset.scss';
+@import url(https://fonts.googleapis.com/css?family=Roboto:400);
+
+html {
+	height: 100%;
+	background-color: $default
+}
+
+body {
+	height: 100%;
+	font-family: 'Roboto', sans-serif;
+}
+
+#root {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	height: 100%;
+}
+
+header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	height: 98px;
+	background-color: $primarymain;
+	box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+
+	h1 {
+		font-size: 2rem;
+		padding-left: 16px;
+		color: white;
+		flex: 1;
+	}
+
+	nav {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		width: 1000px;
+		padding-right: 16px;
+		flex: 1;
+	}
+}
+
+main {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+
+	.card{
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		width: 100px;
+		height: 100px;
+		font-size: 2rem;
+		box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+		border-radius: 4px;
+	}
+}
+
+footer {
+	display: flex;
+	justify-content: space-around;
+	align-items: center;
+	height: 96px;
+	background-color: $primarymain;
+
+	.tool {
+		display: flex;
+		justify-content: space-between;
+
+		p {
+			color: white;
+			padding: 8px
+		}
+	}
+}
+
+button {
+	color: white;
+	font-weight: bold;
+	border-style: solid;
+	border-width: 1px;
+	border-color: #e0e0e0;
+	background-color: $primarymain;
+	padding: 8px;
+	border-radius: 8px;
+}
