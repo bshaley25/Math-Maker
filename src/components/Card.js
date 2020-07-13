@@ -1,4 +1,5 @@
 import React from 'react'
+import '../stylesheets/Card.scss'
 
 export default ({ grid, loadSavedGrid, deleteGrid }) => {
 
@@ -14,7 +15,9 @@ export default ({ grid, loadSavedGrid, deleteGrid }) => {
 
     return (
         <section className='card' >
-            {grid.id}
+            <h3>columns: {grid.colums}</h3>
+            <h3>rows: {grid.rows}</h3>
+            
             <button onClick={handleClick}>Edit</button>
             <button onClick={handleDelete}>Delete</button>
         </section>
